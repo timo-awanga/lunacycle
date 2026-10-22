@@ -1,0 +1,1 @@
+This folder contains the account-backed LunaCycle frontend. The Express server serves `index.html` and the `/api` routes from the same origin; start the app using the setup instructions in the repository root. Do not open this page as a local file, because account authentication and database persistence require the server.

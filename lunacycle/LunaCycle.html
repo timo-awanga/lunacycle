@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<script>if(location.protocol==='file:')location.replace('http://localhost:4000/')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LunaCycle</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fffdf9;--ink:#23213a;--mute:#7a7690;--line:#e8e2d8;--accent:#5b4fc4;--soft:#e9e5fb;--flow:#d9576b;--peach:#f2a77c;--ok:#4aa58a;--shadow:0 6px 24px rgba(40,30,90,.07);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12111f;--card:#1c1a30;--ink:#ece9fb;--mute:#9a96b8;--line:#2d2a48;--accent:#9d90ff;--soft:#2a2650;--flow:#ef7a8c;--shadow:none}}
+:root[data-theme="dark"]{--bg:#12111f;--card:#1c1a30;--ink:#ece9fb;--mute:#9a96b8;--line:#2d2a48;--accent:#9d90ff;--soft:#2a2650;--flow:#ef7a8c;--shadow:none}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;margin:0 0 .4em}h1{font-size:1.9rem}h2{font-size:1.2rem}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav a{flex:1;text-align:center;padding:8px 2px;font-size:.62rem;color:var(--mute);text-decoration:none}nav a b{display:block;font-size:1.2rem;font-weight:400}
+nav a.on{color:var(--accent);font-weight:600}.brand{display:none}
+main{max-width:980px;margin:0 auto;padding:18px 16px 96px;animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(6px)}}
+@media(min-width:860px){nav{top:0;bottom:auto;width:210px;flex-direction:column;border:0;border-right:1px solid var(--line);padding:22px 12px}
+nav a{text-align:left;font-size:.95rem;padding:10px 14px;border-radius:12px;margin-bottom:4px}nav a b{display:inline;margin-right:10px;font-size:1.05rem}nav a.on{background:var(--soft)}
+.brand{display:block;font:600 1.4rem Georgia,serif;padding:0 14px 18px;color:var(--accent)}main{margin-left:210px;max-width:none;padding:28px 36px 40px}}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.big{font:600 3rem/1 Georgia,serif;color:var(--accent)}.mute{color:var(--mute);font-size:.88rem}.note{font-size:.78rem;color:var(--mute);margin-top:8px}
+.chip{display:inline-block;padding:5px 12px;margin:3px 4px 3px 0;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:.85rem;cursor:pointer}
+.chip.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+button.p{background:var(--accent);color:var(--bg);border:0;border-radius:12px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}button.g{background:none;border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:10px 16px;font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
+input,textarea,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}label{display:block;margin:12px 0 4px;font-size:.85rem;color:var(--mute)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.cal .h{text-align:center;font-size:.72rem;color:var(--mute)}
+.day{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:.85rem;position:relative;cursor:pointer;padding:0}
+.day.flow{background:var(--flow);color:#fff;border-color:var(--flow)}.day.pred{border:2px dashed var(--flow)}.day.today{box-shadow:0 0 0 2px var(--accent)}.day.sel{outline:3px solid var(--peach)}
+.dots{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:2px}.dots i{width:5px;height:5px;border-radius:50%}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hb{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;font-size:.85rem;margin:6px 0}.hb u{display:block;height:10px;border-radius:6px;background:var(--soft)}.hb u i{display:block;height:100%;border-radius:6px;background:var(--accent)}
+.msg{padding:12px 14px;border-radius:16px;margin:10px 0;background:var(--soft);white-space:pre-wrap}.msg.me{background:var(--accent);color:var(--bg);margin-left:20%}
+.tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700}
+svg text{fill:var(--mute);font-size:9px}
+@media(prefers-reduced-motion:reduce){main{animation:none}}
+</style></head><body>
+<nav id="nav"></nav><main id="app"></main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const D0=s=>new Date(s+'T00:00:00'),iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const add=(s,n)=>{const d=D0(s);d.setDate(d.getDate()+n);return iso(d)},diff=(a,b)=>Math.round((D0(a)-D0(b))/864e5),today=()=>iso(new Date());
+const fmt=(s,o={month:'short',day:'numeric'})=>D0(s).toLocaleDateString(undefined,o);
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+let S;try{S=JSON.parse(localStorage.getItem('luna'))}catch(e){}
+S=S||{logs:{},journal:{},set:{name:'',cycle:28,period:5,theme:'system',remPeriod:true,remDaily:false,remCustom:''},chat:[]};
+const save=()=>{try{localStorage.setItem('luna',JSON.stringify(S))}catch(e){}};
+const theme=()=>{const t=S.set.theme;t==='system'?document.documentElement.removeAttribute('data-theme'):document.documentElement.setAttribute('data-theme',t)};
+const SYM=['Cramps','Headache','Bloating','Breast tenderness','Fatigue','Mood changes','Back pain','Acne'],MOODS=['Calm','Happy','Energised','Anxious','Irritable','Low'],FLOW=['None','Spotting','Light','Medium','Heavy'];
+// ---------- data & prediction ----------
+function periods(){const ds=Object.keys(S.logs).filter(d=>S.logs[d].flow>0).sort(),o=[];for(const d of ds){const l=o[o.length-1];if(l&&diff(d,l.end)<=2)l.end=d;else o.push({start:d,end:d})}o.forEach(p=>p.len=diff(p.end,p.start)+1);return o}
+function stats(){const P=periods(),lens=[];for(let i=1;i<P.length;i++)lens.push(diff(P[i].start,P[i-1].start));const L=lens.slice(-6),avg=L.length?mean(L):+S.set.cycle,sd=L.length>1?Math.sqrt(mean(L.map(x=>(x-avg)**2))):0;
+return{P,lens,L,avg,sd,pl:P.length?mean(P.map(p=>p.len)):+S.set.period,last:P.length?P[P.length-1].start:null}}
+function predict(st){if(!st.last)return null;const sp=st.L.length>1?Math.max(1,Math.round(st.sd)):3,c=add(st.last,Math.round(st.avg));return{from:add(c,-sp),to:add(c,sp),c,sp}}
+function ctx(date,st){let s=null,i=-1;st.P.forEach((p,k)=>{if(p.start<=date){s=p.start;i=k}});if(!s)return null;const nx=st.P[i+1],len=nx?diff(nx.start,s):Math.round(st.avg);return{day:diff(date,s)+1,len}}
+function phase(day,st){const ov=Math.round(st.avg)-14,pl=Math.round(st.pl);if(day<=pl)return['Menstrual','Your recorded period days.'];if(day<ov-2)return['Follicular','Estimated: between your period and ovulation.'];if(day<=ov+1)return['Ovulation window','Estimated window only; it can vary a lot.'];return['Luteal','Estimated: after the ovulation window, before next period.']}
+function patterns(st){const m={};for(const d in S.logs)(S.logs[d].symptoms||[]).forEach(s=>{const c=ctx(d,st);if(c)(m[s]=m[s]||[]).push({f:(c.day-1)/c.len,day:c.day})});
+return Object.entries(m).filter(([,a])=>a.length>=3).map(([s,a])=>{const f=mean(a.map(x=>x.f)),w=f<.25?'around the start of your cycle':f<.6?'in the middle part of your cycle':'during the later part of your cycle';return{s,n:a.length,day:Math.round(mean(a.map(x=>x.day))),text:`Based on your previous records, you commonly logged ${s.toLowerCase()} ${w} (${a.length} entries, around day ${Math.round(mean(a.map(x=>x.day)))}).`}})}
+function seed(){const lens=[28,30,27,29,31,28,29];let s=add(today(),-9-lens.reduce((a,b)=>a+b,0)+0);S.logs={};const flows=[2,3,4,3,1],pick=(i,n)=>(i*7+3)%n;
+let starts=[s];lens.forEach(l=>{starts.push(add(starts[starts.length-1],l))});
+starts.forEach((st,ci)=>{const len=lens[ci]||29;for(let d=0;d<len&&add(st,d)<=today();d++){const date=add(st,d),L=S.logs[date]={symptoms:[]};
+if(d<5)L.flow=flows[d];if(d<2)L.symptoms.push('Cramps');if(d===0&&ci%2)L.symptoms.push('Back pain');if(d>=len-5&&d<len-1)L.symptoms.push('Fatigue');if(d>=len-6&&d<len-3&&ci%3!==1)L.symptoms.push('Bloating');if((d+ci)%11===0)L.symptoms.push('Headache');
+L.mood=d<5?['Low','Calm','Irritable'][pick(d+ci,3)]:d>len-6?['Irritable','Anxious','Low'][pick(d+ci,3)]:['Happy','Energised','Calm'][pick(d+ci,3)];
+L.energy=d<3?2:d<12?4:d>len-6?2:3+(d+ci)%2;L.sleep=+(6+((d*5+ci)%9)/4).toFixed(1);if(!L.symptoms.length)delete L.symptoms}});
+S.set.name=S.set.name||'Sample';S.journal[add(today(),-2)]='Felt tired by evening but a walk helped. Early night planned.';save()}
+// ---------- charts ----------
+const bars=(v,l)=>{const m=Math.max(...v,1),w=300/v.length;return`<svg viewBox="0 0 300 130" role="img" aria-label="Bar chart">${v.map((x,i)=>{const h=x/m*85;return`<rect x="${i*w+w*.15}" y="${105-h}" width="${w*.7}" height="${h}" rx="5" fill="var(--accent)"/><text x="${i*w+w/2}" y="${100-h}" text-anchor="middle">${x}</text><text x="${i*w+w/2}" y="122" text-anchor="middle">${l[i]}</text>`}).join('')}</svg>`};
+const line=v=>{if(v.length<2)return'<p class="mute">Log energy on a few days to see a trend.</p>';const w=300/(v.length-1),pts=v.map((x,i)=>`${i*w},${100-(x-1)/4*90}`).join(' ');return`<svg viewBox="-6 0 312 110" role="img" aria-label="Energy trend"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>${v.map((x,i)=>`<circle cx="${i*w}" cy="${100-(x-1)/4*90}" r="2.5" fill="var(--peach)"/>`).join('')}</svg>`};
+const hb=m=>{const e=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8),mx=e.length?e[0][1]:1;return e.length?e.map(([k,n])=>`<div class="hb"><span>${esc(k)}</span><u><i style="width:${n/mx*100}%"></i></u><b>${n}</b></div>`).join(''):'<p class="mute">Nothing logged yet.</p>'};
+// ---------- editor ----------
+let sel=today(),dr=null,drFor=null,mo=0;
+const chips=(arr,cur,fn)=>arr.map(x=>`<button class="chip ${cur&&cur.includes(x)?'on':''}" onclick="${fn}('${x}')" aria-pressed="${!!(cur&&cur.includes(x))}">${x}</button>`).join('');
+function editor(){if(drFor!==sel){dr=JSON.parse(JSON.stringify(S.logs[sel]||{}));drFor=sel}const d=dr,sy=d.symptoms||[],custom=sy.filter(x=>!SYM.includes(x));
+return`<div class="card"><h2>${fmt(sel,{weekday:'long',month:'long',day:'numeric'})}</h2>
+<label>Period flow</label>${FLOW.map((f,i)=>`<button class="chip ${(d.flow||0)===i?'on':''}" onclick="setF(${i})">${f}</button>`).join('')}
+<label>Symptoms <span class="mute">(personal tracking, not a diagnosis)</span></label>${chips([...SYM,...custom],sy,'tg')}
+<div class="row" style="margin-top:6px"><input id="cs" placeholder="Add a custom symptom" maxlength="40" style="flex:1"><button class="g" onclick="addC()">Add</button></div>
+<label>Mood</label>${MOODS.map(x=>`<button class="chip ${d.mood===x?'on':''}" onclick="setM('${x}')">${x}</button>`).join('')}
+<label>Energy (1 low – 5 high)</label>${[1,2,3,4,5].map(i=>`<button class="chip ${d.energy===i?'on':''}" onclick="setE(${i})">${i}</button>`).join('')}
+<label>Sleep (hours)</label><input id="sl" type="number" min="0" max="24" step="0.5" value="${d.sleep??''}" style="max-width:140px">
+<label>Notes</label><textarea id="nt" rows="3" maxlength="2000">${esc(d.note||'')}</textarea>
+<div class="row" style="margin-top:14px"><button class="p" onclick="saveD()">Save entry</button>${S.logs[sel]?'<button class="g" onclick="delD()">Delete entry</button>':''}</div></div>`}
+const keep=()=>{if(dr){const s=$('#sl'),n=$('#nt');if(s)dr.sleep=s.value===''?undefined:Math.min(24,Math.max(0,+s.value));if(n)dr.note=n.value}};
+const setF=i=>{keep();dr.flow=i;render()},tg=x=>{keep();const a=dr.symptoms=dr.symptoms||[];a.includes(x)?a.splice(a.indexOf(x),1):a.push(x);render()},setM=x=>{keep();dr.mood=dr.mood===x?undefined:x;render()},setE=i=>{keep();dr.energy=dr.energy===i?undefined:i;render()};
+const addC=()=>{keep();const v=$('#cs').value.trim().slice(0,40);if(v){dr.symptoms=dr.symptoms||[];if(!dr.symptoms.includes(v))dr.symptoms.push(v)}render()};
+const saveD=()=>{keep();const c={};for(const k in dr)if(dr[k]!==undefined&&dr[k]!==''&&!(Array.isArray(dr[k])&&!dr[k].length)&&!(k==='flow'&&!dr[k]))c[k]=dr[k];if(Object.keys(c).length)S.logs[sel]=c;else delete S.logs[sel];save();drFor=null;render()};
+const delD=()=>{if(confirm('Delete this day\u2019s entry?')){delete S.logs[sel];save();drFor=null;render()}};
+const pick=d=>{sel=d;drFor=null;render()};
+// ---------- views ----------
+const V={};
+V.dashboard=()=>{const st=stats(),t=today();
+if(!st.last)return`<h1>Welcome to LunaCycle</h1><p class="mute">Everything here is optional and stays on this device in this demo.</p><div class="grid"><div class="card"><h2>Quick setup</h2><label>Your name</label><input id="o0" maxlength="40" value="${esc(S.set.name)}"><label>Average cycle length (days)</label><input id="o1" type="number" min="15" max="90" value="${S.set.cycle}"><label>Typical period (days)</label><input id="o2" type="number" min="1" max="15" value="${S.set.period}"><label>Last period start (optional)</label><input id="o3" type="date" max="${t}"><div class="row" style="margin-top:14px"><button class="p" onclick="onb()">Start tracking</button></div></div><div class="card"><h2>Just exploring?</h2><p>Load ~7 months of sample data to see the dashboard, charts, Pattern Engine and Luna AI working.</p><button class="p" onclick="seed();render()">Load sample data</button></div></div>`;
+const pr=predict(st),c=ctx(t,st),ph=c?phase(c.day,st):['—',''],rec=Object.keys(S.logs).sort().reverse(),lg=S.logs[t]||{},pick1=k=>{const d=rec.find(x=>S.logs[x][k]!==undefined);return d?S.logs[d][k]:null},
+sy=[...new Set(rec.filter(d=>diff(t,d)<=7).flatMap(d=>S.logs[d].symptoms||[]))],lastP=st.P[st.P.length-1],rem=[];
+if(S.set.remPeriod&&pr)rem.push(`Heads-up: period may start ${fmt(pr.from)}–${fmt(pr.to)}`);if(S.set.remDaily)rem.push('Daily check-in: log how you feel today');if(S.set.remCustom)rem.push(esc(S.set.remCustom));
+return`<div class="row"><h1>Hello${S.set.name?', '+esc(S.set.name):''} 🌙</h1><button class="p" onclick="go('track')">Log today</button></div>
+<div class="grid"><div class="card"><div class="mute">Current cycle day</div><div class="big">${c?c.day:'—'}</div><div class="note">${c&&c.day>st.avg+10?'Longer than your usual; that can happen. Consider a check-in with a clinician if it worries you.':'Based on your last logged period start.'}</div></div>
+<div class="card"><div class="mute">Estimated next period</div><h2 style="margin-top:6px">${pr?fmt(pr.from)+' – '+fmt(pr.to):'—'}</h2><div class="note">An estimate from ${st.L.length} recorded cycle${st.L.length===1?'':'s'}${st.L.length<3?' (more logs will sharpen it)':''}. Not a guarantee.</div></div>
+<div class="card"><div class="mute">Estimated phase</div><h2 style="margin-top:6px">${ph[0]}</h2><div class="note">${ph[1]}</div></div>
+<div class="card"><h2>Today & latest</h2><div class="mute">Mood</div><b>${lg.mood||pick1('mood')||'—'}</b> · <span class="mute">Energy</span> <b>${lg.energy||pick1('energy')||'—'}/5</b> · <span class="mute">Sleep</span> <b>${lg.sleep??pick1('sleep')??'—'}h</b></div>
+<div class="card"><h2>Period flow</h2><p>${lastP?`Last period: ${fmt(lastP.start)}–${fmt(lastP.end)} (${lastP.len} days)`:'No period logged'}</p><div class="note">Average length ${st.pl.toFixed(1)} days</div></div>
+<div class="card"><h2>Recent symptoms</h2>${sy.length?sy.map(x=>`<span class="chip">${esc(x)}</span>`).join(''):'<p class="mute">None logged in the last 7 days.</p>'}</div>
+<div class="card"><h2>Cycle history</h2>${st.lens.length?bars(st.lens.slice(-8),st.lens.slice(-8).map((_,i)=>'C'+(st.lens.length-Math.min(8,st.lens.length)+i+1))):'<p class="mute">Log two periods to see cycle lengths.</p>'}</div>
+<div class="card"><h2>Upcoming reminders</h2>${rem.length?rem.map(r=>`<p style="margin:4px 0">🔔 ${r}</p>`).join(''):'<p class="mute">No reminders on. Turn some on in Settings.</p>'}</div></div>`};
+function onb(){S.set.name=$('#o0').value.trim().slice(0,40);S.set.cycle=Math.min(90,Math.max(15,+$('#o1').value||28));S.set.period=Math.min(15,Math.max(1,+$('#o2').value||5));const l=$('#o3').value;if(l)for(let i=0;i<S.set.period;i++)S.logs[add(l,i)]={flow:2};save();render()}
+V.calendar=()=>{const st=stats(),pr=predict(st),b=new Date();b.setDate(1);b.setMonth(b.getMonth()+mo);const y=b.getFullYear(),m=b.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),t=today();
+let h='';for(let i=0;i<first;i++)h+='<div></div>';for(let d=1;d<=n;d++){const ds=iso(new Date(y,m,d)),l=S.logs[ds]||{},p=pr&&ds>=pr.from&&ds<=add(pr.to,Math.round(st.pl)-1)&&ds>t;
+h+=`<button class="day ${l.flow?'flow':''} ${p&&!l.flow?'pred':''} ${ds===t?'today':''} ${ds===sel?'sel':''}" onclick="pick('${ds}')" aria-label="${fmt(ds)}">${d}<span class="dots">${l.symptoms?'<i style="background:var(--peach)"></i>':''}${l.mood?'<i style="background:var(--accent)"></i>':''}${l.sleep!==undefined?'<i style="background:var(--ok)"></i>':''}${S.journal[ds]?'<i style="background:var(--mute)"></i>':''}</span></button>`}
+return`<div class="row"><h1>Calendar</h1><div><button class="g" onclick="mo--;render()" aria-label="Previous month">‹</button> <b>${b.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b> <button class="g" onclick="mo++;render()" aria-label="Next month">›</button></div></div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))"><div class="card"><div class="cal">${'SMTWTFS'.split('').map(x=>`<div class="h">${x}</div>`).join('')}${h}</div><p class="note"><span style="color:var(--flow)">■</span> period · dashed = estimated range · <span style="color:var(--peach)">●</span> symptoms · <span style="color:var(--accent)">●</span> mood · <span style="color:var(--ok)">●</span> sleep · <span>●</span> journal</p></div>${editor()}</div>`};
+V.track=()=>{sel=sel||today();return`<h1>Track</h1><p class="mute">Pick a different day in the Calendar, or log today here.</p>${editor()}`};
+V.insights=()=>{const st=stats(),pt=patterns(st),sym={},mood={},en=[];Object.keys(S.logs).sort().forEach(d=>{const l=S.logs[d];(l.symptoms||[]).forEach(s=>sym[s]=(sym[s]||0)+1);if(l.mood)mood[l.mood]=(mood[l.mood]||0)+1;if(l.energy)en.push(l.energy)});
+const ch=st.lens.length>3?(mean(st.lens.slice(-3))-mean(st.lens.slice(0,3))):0;
+return`<h1>Insights</h1><div class="grid"><div class="card"><div class="mute">Average cycle</div><div class="big">${st.L.length?st.avg.toFixed(1):'—'}</div><div class="note">days (last ${st.L.length})</div></div><div class="card"><div class="mute">Average period</div><div class="big">${st.P.length?st.pl.toFixed(1):'—'}</div><div class="note">days</div></div><div class="card"><div class="mute">Variability</div><div class="big">${st.L.length>1?'±'+st.sd.toFixed(1):'—'}</div><div class="note">${st.L.length>1?'range '+Math.min(...st.L)+'–'+Math.max(...st.L)+' days':'needs 2+ cycles'}</div></div></div>
+<div class="grid" style="margin-top:14px"><div class="card"><h2>Cycle lengths</h2>${st.lens.length?bars(st.lens.slice(-10),st.lens.slice(-10).map((_,i)=>i+1)):'<p class="mute">Not enough data yet.</p>'}<div class="note">${st.lens.length>3?`Compared with your first 3 recorded cycles, your latest 3 average ${Math.abs(ch).toFixed(1)} days ${ch>=0?'longer':'shorter'}.`:''}</div></div>
+<div class="card"><h2>Symptom frequency</h2>${hb(sym)}</div><div class="card"><h2>Mood trends</h2>${hb(mood)}</div><div class="card"><h2>Energy trend</h2>${line(en.slice(-30))}</div></div>
+<div class="card" style="margin-top:14px"><div class="tag">Personal Pattern Engine</div><h2>Patterns in your records</h2>${pt.length?pt.map(p=>`<p>${esc(p.text)}</p>`).join(''):'<p class="mute">Log a symptom 3+ times across cycles to reveal patterns.</p>'}<div class="note">These are patterns in what you recorded, not medical conclusions.</div></div>`};
+function reply(q){const st=stats(),pt=patterns(st),t=q.toLowerCase(),tr=[],edu=[];let med='';
+if(/diagnos|pcos|endometriosis|pregnan|cancer|infection|disease/.test(t)||/severe|fainting|very heavy|soaking|bleeding between|missed|worried/.test(t))med='I can\u2019t diagnose or assess medical conditions. Severe pain, very heavy bleeding, fainting, or big unexplained changes are worth discussing with a qualified healthcare professional.';
+const hit=SYM.concat(Object.keys(patterns(st).reduce((a,p)=>(a[p.s]=1,a),{}))).find(s=>t.includes(s.toLowerCase().split(' ')[0]));
+if(/last|how long|cycle length|five|5/.test(t)&&/cycle/.test(t)||/how long/.test(t))tr.push(st.lens.length?`Your last ${Math.min(5,st.lens.length)} cycle lengths: ${st.lens.slice(-5).join(', ')} days (average ${st.avg.toFixed(1)}).`:'I need at least two logged periods to measure a cycle length.');
+else if(/change|trend|vari|over time/.test(t))tr.push(st.lens.length>3?`Earliest 3 cycles averaged ${mean(st.lens.slice(0,3)).toFixed(1)} days; latest 3 averaged ${mean(st.lens.slice(-3)).toFixed(1)} days. Variability is about ±${st.sd.toFixed(1)} days.`:'Not enough cycles logged to describe change over time yet.');
+else if(hit){const p=pt.find(x=>x.s===hit);tr.push(p?p.text:`I don\u2019t have enough logged entries of ${hit.toLowerCase()} to describe a pattern.`)}
+else if(/symptom/.test(t)){const c={};Object.values(S.logs).forEach(l=>(l.symptoms||[]).forEach(s=>c[s]=(c[s]||0)+1));const e=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,5);tr.push(e.length?'Most logged: '+e.map(([k,n])=>`${k} (${n})`).join(', ')+'.':'No symptoms logged yet.');}
+else if(/summar|recent|overview/.test(t)){const pr=predict(st);tr.push(st.last?`Logged ${st.P.length} periods; average cycle ${st.avg.toFixed(1)} days, period ${st.pl.toFixed(1)} days. Last period began ${fmt(st.last)}. ${pr?`Next one is estimated around ${fmt(pr.from)}–${fmt(pr.to)}.`:''}`:'Nothing to summarise yet. Log a period first.')}
+if(/why|what is|cause|normal|phase|ovulat/.test(t))edu.push('Cycle lengths commonly vary from person to person and month to month. Many people notice changes in energy, mood or sleep across a cycle, but experiences differ widely.');
+if(!tr.length&&!edu.length&&!med)tr.push('Try: \u201CHow long were my last five cycles?\u201D, \u201CWhat symptoms did I log most?\u201D, \u201CWhen did I get cramps?\u201D, \u201CHow has my cycle length changed?\u201D or \u201CSummarize my recent data.\u201D');
+return[tr.length&&'📒 Your tracking data\n'+tr.join('\n'),edu.length&&'📚 General education\n'+edu.join('\n'),med&&'🩺 Medical advice\n'+med].filter(Boolean).join('\n\n')}
+V.ai=()=>{if(!S.set.ai)return`<h1>Luna AI</h1><div class="card"><p>Luna AI is optional and off by default. It answers from your logged data on this device (a rule-based demo, no external AI). It shares tracking insights and general education only, and never diagnoses.</p><button class="p" onclick="S.set.ai=true;save();render()">Turn on Luna AI</button></div>`;
+return`<h1>Luna AI</h1><div class="card">${S.chat.map(m=>`<div class="msg ${m.me?'me':''}">${esc(m.t)}</div>`).join('')||'<p class="mute">Ask about your own logged data.</p>'}<div>${['How long were my last five cycles?','What symptoms did I log most?','When did I get cramps?','How has my cycle length changed?','Summarize my recent data'].map(q=>`<button class="chip" onclick="ask('${q}')">${q}</button>`).join('')}</div><div class="row" style="margin-top:10px"><input id="q" placeholder="Ask Luna AI…" maxlength="200" style="flex:1" onkeydown="if(event.key==='Enter')ask()"><button class="p" onclick="ask()">Send</button></div><p class="note">Luna AI shares patterns from your records and general information. It is not a doctor and can\u2019t diagnose.</p></div>`};
+function ask(q){q=q||$('#q').value.trim();if(!q)return;S.chat.push({me:1,t:q},{t:reply(q)});S.chat=S.chat.slice(-30);save();render();scrollTo(0,document.body.scrollHeight)}
+V.journal=()=>{const ks=Object.keys(S.journal).sort().reverse();return`<h1>Cycle Journal</h1><div class="grid"><div class="card"><label>Date</label><input type="date" id="jd" value="${sel}" max="${today()}" onchange="sel=this.value;render()"><label>Private note</label><textarea id="jt" rows="6" maxlength="10000">${esc(S.journal[sel]||'')}</textarea><div class="row" style="margin-top:12px"><button class="p" onclick="jsave()">Save</button>${S.journal[sel]?'<button class="g" onclick="delete S.journal[sel];save();render()">Delete</button>':''}</div></div><div class="card"><h2>Entries</h2>${ks.map(k=>`<p><button class="chip" onclick="sel='${k}';render()">${fmt(k)}</button> ${esc(S.journal[k].slice(0,90))}</p>`).join('')||'<p class="mute">No entries yet.</p>'}</div></div>`};
+const jsave=()=>{const v=$('#jt').value.trim();v?S.journal[sel]=v:delete S.journal[sel];save();render()};
+V.settings=()=>{const s=S.set;return`<h1>Settings</h1><div class="grid"><div class="card"><h2>Profile & cycle</h2><label>Name</label><input id="s0" value="${esc(s.name)}" maxlength="40"><label>Typical cycle length</label><input id="s1" type="number" min="15" max="90" value="${s.cycle}"><label>Typical period length</label><input id="s2" type="number" min="1" max="15" value="${s.period}"><label>Theme</label><select id="s3">${['system','light','dark'].map(x=>`<option ${s.theme===x?'selected':''}>${x}</option>`).join('')}</select><div style="margin-top:14px"><button class="p" onclick="sset()">Save</button></div></div>
+<div class="card"><h2>Reminders</h2><label><input type="checkbox" id="r1" style="width:auto" ${s.remPeriod?'checked':''}> Expected period</label><label><input type="checkbox" id="r2" style="width:auto" ${s.remDaily?'checked':''}> Daily tracking</label><label>Custom / medication reminder (optional)</label><input id="r3" maxlength="100" value="${esc(s.remCustom)}"><p class="note">In this demo reminders show on your dashboard; phone notifications need the full backend.</p><button class="p" onclick="sset()">Save</button></div>
+<div class="card"><h2>Privacy & data</h2><p class="mute">Demo data lives only in this browser (localStorage).</p><div class="row"><button class="g" onclick="exp()">Export my data</button><button class="g" onclick="seed();render()">Load sample data</button><button class="g" style="color:var(--flow)" onclick="wipe()">Delete all data</button></div></div></div>`};
+function sset(){const s=S.set,g=i=>document.getElementById(i);if(g('s0')){s.name=g('s0').value.trim().slice(0,40);s.cycle=Math.min(90,Math.max(15,+g('s1').value||28));s.period=Math.min(15,Math.max(1,+g('s2').value||5));s.theme=g('s3').value;s.remPeriod=g('r1').checked;s.remDaily=g('r2').checked;s.remCustom=g('r3').value.slice(0,100)}save();theme();render()}
+function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download='lunacycle-export.json';a.click()}
+function wipe(){if(confirm('Delete ALL your LunaCycle data? This cannot be undone.')){try{localStorage.removeItem('luna')}catch(e){}S={logs:{},journal:{},set:{name:'',cycle:28,period:5,theme:'system',remPeriod:true,remDaily:false,remCustom:''},chat:[]};theme();render()}}
+// ---------- router ----------
+const NAV=[['dashboard','◐','Dashboard'],['calendar','▦','Calendar'],['track','✎','Track'],['insights','∿','Insights'],['ai','✦','Luna AI'],['journal','❡','Journal'],['settings','⚙','Settings']];
+const go=p=>{location.hash=p};
+function render(){const p=(location.hash.slice(1)||'dashboard');const v=V[p]?p:'dashboard';
+$('#nav').innerHTML='<div class="brand">🌙 LunaCycle</div>'+NAV.map(([k,i,l])=>`<a href="#${k}" class="${k===v?'on':''}"><b>${i}</b>${l}</a>`).join('');
+const y=scrollY;$('#app').innerHTML=V[v]();scrollTo(0,y)}
+addEventListener('hashchange',()=>{window.scrollTo(0,0);render()});theme();render();
+</script></body></html>
