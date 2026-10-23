@@ -5,6 +5,7 @@ import { pool, query } from '../db/pool.js';
 import { requireAuth, COOKIE, cookieOptions } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { AppError } from '../utils/errors.js';
+import { env } from '../config/env.js';
 
 const r = Router();
 r.use(requireAuth); // every route below is server-side authorized; user id comes from the session, never the client
@@ -32,7 +33,7 @@ r.get('/data', async (req, res) => {
   const journal = Object.fromEntries(jn.map((x) => [x.d, x.body]));
   const n = (k) => nt.find((x) => x.kind === k);
   res.json({
-    user: req.user, logs, journal,
+    user: req.user, logs, journal, dev: env.NODE_ENV !== 'production',
     set: {
       name: req.user.display_name || '', cycle: s.avg_cycle_length || 28, period: s.typical_period_days || 5,
       theme: s.theme || 'system', ai: !!s.ai_enabled,

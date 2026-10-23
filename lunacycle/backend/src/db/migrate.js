@@ -1,8 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { pool } from './pool.js';
-
-const sql = readFileSync(fileURLToPath(new URL('./schema.sql', import.meta.url)), 'utf8');
-await pool.query(sql);
+import './pool.js'; // importing the pool applies the (idempotent) schema
 console.log('✔ Schema applied');
-await pool.end();
+process.exit(0);

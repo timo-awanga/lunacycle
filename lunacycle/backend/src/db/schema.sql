@@ -145,3 +145,59 @@ DO $$ DECLARE t TEXT; BEGIN
                     FOR EACH ROW EXECUTE FUNCTION set_updated_at()', t);
   END LOOP;
 END $$;
+
+-- Phase 1: roles, account status, audit trail (additive, safe to re-run)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user','admin'));
+ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','suspended'));
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_id   UUID REFERENCES users(id) ON DELETE SET NULL, -- NULL = server-side/CLI action
+  action     TEXT NOT NULL,
+  target_id  UUID REFERENCES users(id) ON DELETE SET NULL,
+  meta       JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at DESC);
+
+-- Phase 2: email verification, consent history, AI usage metering
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMPTZ;
+CREATE TABLE IF NOT EXISTS email_verification_tokens (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+-- Append-only: the latest row per (user, kind) is the current choice; history is kept as proof of consent.
+CREATE TABLE IF NOT EXISTS consent_records (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kind       TEXT NOT NULL CHECK (kind IN ('terms','ai_processing')),
+  granted    BOOLEAN NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_consent_user ON consent_records(user_id, kind, created_at DESC);
+CREATE TABLE IF NOT EXISTS ai_usage (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID REFERENCES users(id) ON DELETE SET NULL,
+  ok            BOOLEAN NOT NULL,
+  input_tokens  INT NOT NULL DEFAULT 0,
+  output_tokens INT NOT NULL DEFAULT 0,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_created ON ai_usage(created_at DESC);
+
+-- Phase 4: billing (Stripe is the source of truth; we store only status + ids, never card data)
+CREATE TABLE IF NOT EXISTS subscriptions (
+  user_id                UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  plan                   TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free','premium')),
+  status                 TEXT NOT NULL DEFAULT 'none',
+  stripe_customer_id     TEXT,
+  stripe_subscription_id TEXT,
+  current_period_end     TIMESTAMPTZ,
+  cancel_at_period_end   BOOLEAN NOT NULL DEFAULT false,
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_subs_stripe ON subscriptions(stripe_subscription_id);
+CREATE TABLE IF NOT EXISTS stripe_events (id TEXT PRIMARY KEY, created_at TIMESTAMPTZ NOT NULL DEFAULT now());

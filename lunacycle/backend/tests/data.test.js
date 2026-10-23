@@ -1,0 +1,30 @@
+import { test, after } from 'node:test';
+import assert from 'node:assert/strict';
+process.env.NODE_ENV = 'test'; process.env.DATA_DIR = 'memory://';
+const { app } = await import('../src/app.js');
+const { pool } = await import('../src/db/pool.js');
+const server = await new Promise((r) => { const s = app.listen(0, () => r(s)); });
+const base = `http://localhost:${server.address().port}`;
+let cookie;
+const call = async (p, b) => { const r = await fetch(base + p, { method: b ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', ...(cookie && { Cookie: cookie }) }, body: b && JSON.stringify(b) }); return { r, j: await r.json() }; };
+after(async () => { server.close(); await pool.end(); });
+
+test('logs, settings, journal, delete account', async () => {
+  const s = await call('/api/auth/signup', { email: 'a@example.com', password: 'correct-horse-battery', acceptTerms: true });
+  assert.equal(s.r.status, 201); cookie = s.r.headers.get('set-cookie').split(';')[0];
+  let r = await call('/api/logs', { logs: [{ date: '2026-09-01', flow: 3, symptoms: ['Cramps', 'My custom'], mood: 'Calm', energy: 4, sleep: 7.5, note: 'hi' }] });
+  assert.equal(r.r.status, 200);
+  r = await call('/api/data'); const l = r.j.logs['2026-09-01'];
+  assert.deepEqual([l.flow, l.energy, l.sleep, l.mood, l.note, l.symptoms.length], [3, 4, 7.5, 'Calm', 'hi', 2]);
+  assert.equal((await call('/api/logs', { logs: [{ date: 'bad', flow: 9 }] })).r.status, 400);
+  r = await call('/api/settings', { name: 'Ana', cycle: 30, period: 4, theme: 'dark', remPeriod: true, remDaily: true, remCustom: 'Vitamin' });
+  assert.equal(r.r.status, 200);
+  await call('/api/journal', { date: '2026-09-01', body: 'dear diary' });
+  r = await call('/api/data');
+  assert.deepEqual([r.j.set.cycle, r.j.set.theme, r.j.set.remCustom, r.j.journal['2026-09-01']], [30, 'dark', 'Vitamin', 'dear diary']);
+  await call('/api/logs/delete', { date: '2026-09-01' });
+  assert.equal((await call('/api/data')).j.logs['2026-09-01'], undefined);
+  assert.equal((await call('/api/account/delete', { password: 'wrong-password-1' })).r.status, 403);
+  assert.equal((await call('/api/account/delete', { password: 'correct-horse-battery', acceptTerms: true })).r.status, 200);
+  assert.equal((await call('/api/auth/me')).r.status, 401);
+});

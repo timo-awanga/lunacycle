@@ -1,0 +1,11 @@
+{
+  "framework": null,
+  "buildCommand": "echo skip",
+  "outputDirectory": "frontend",
+  "functions": { "api/index.js": { "includeFiles": "backend/src/db/schema.sql", "maxDuration": 30 } },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/reset-password", "destination": "/index.html" },
+    { "source": "/verify-email", "destination": "/index.html" }
+  ]
+}

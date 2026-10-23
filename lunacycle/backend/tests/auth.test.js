@@ -1,7 +1,7 @@
 // Needs a migrated DB: npm test
 import { test, after, before } from 'node:test';
 import assert from 'node:assert/strict';
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test'; process.env.DATA_DIR = 'memory://';
 const { app } = await import('../src/app.js');
 const { pool } = await import('../src/db/pool.js');
 
@@ -22,14 +22,14 @@ test('rejects weak password', async () => {
   assert.equal((await call('/api/auth/signup', 'POST', { email, password: 'short' })).status, 400);
 });
 test('signup sets httpOnly cookie', async () => {
-  const r = await call('/api/auth/signup', 'POST', { email, password: pw });
+  const r = await call('/api/auth/signup', 'POST', { email, password: pw, acceptTerms: true });
   assert.equal(r.status, 201);
   const sc = r.headers.get('set-cookie');
   assert.match(sc, /HttpOnly/i);
   cookie = sc.split(';')[0];
 });
 test('duplicate signup -> 409', async () => {
-  assert.equal((await call('/api/auth/signup', 'POST', { email, password: pw })).status, 409);
+  assert.equal((await call('/api/auth/signup', 'POST', { email, password: pw, acceptTerms: true })).status, 409);
 });
 test('protected route needs session', async () => {
   assert.equal((await call('/api/auth/me', 'GET', null, false)).status, 401);
@@ -37,7 +37,7 @@ test('protected route needs session', async () => {
 });
 test('wrong password -> 401, right password -> 200', async () => {
   assert.equal((await call('/api/auth/login', 'POST', { email, password: 'wrong-password-1' })).status, 401);
-  assert.equal((await call('/api/auth/login', 'POST', { email, password: pw })).status, 200);
+  assert.equal((await call('/api/auth/login', 'POST', { email, password: pw, acceptTerms: true })).status, 200);
 });
 test('forgot-password is uniform for unknown emails', async () => {
   assert.equal((await call('/api/auth/forgot-password', 'POST', { email: 'nobody@example.com' })).status, 200);
